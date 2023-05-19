@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+
+###############################################################################
+#                                                                             #
+#                              Create a Certificate                           #
+#                                                                             #
+#   Use this script to create a self signed certificate using the (CA) that   #
+#   was created by the create-ca.sh script.                                   #
+#                                                                             #
+###############################################################################
+
 source .env
 
 USAGE="Usage: $0 <cert-name> <passphrase> [--ips=<ip1,ip2,...>] [--domains=<domain1,domain2,...>]"
@@ -7,6 +17,7 @@ if [[ -z "$CA_PREFIX" ]]
 then
   echo "No .env value set for CA_PREFIX"
   exit 1
+fi
 
 CA="./CA/$CA_PREFIX.CA-certificate.pem"
 CA_KEY="./CA/$CA_PREFIX.CA-key.pem"
