@@ -20,7 +20,6 @@ for file in "${FILES[@]}"; do
   check-file-exists "$file" "A self signed certificate cannot be created without the Certificate Authority"
 done
 
-exit
 # Ensure all required arguments are supplied.
 if [[ -z "$1" ]]
 then
