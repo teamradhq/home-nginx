@@ -1,0 +1,14 @@
+[Unit]
+Description=Name of Docker Compose Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/docker compose -f /path/to/docker-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f /path/to/docker-compose.yml down
+ExecReload=/bin/bash -c '/usr/bin/docker compose -f /path/to/docker-compose.yml down && /usr/bin/docker compose -f /path/to/docker-compose.yml up -d'
+
+[Install]
+WantedBy=multi-user.target
