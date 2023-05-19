@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source ./functions.sh
 
 ###############################################################################
 #                                                                             #
@@ -10,13 +11,7 @@
 ###############################################################################
 
 source .env
-
-# Ensure env requirements are met
-if [[ -z "$CA_PREFIX" ]]
-then
-  echo "No .env value set for CA_PREFIX"
-  exit 1
-fi
+check-env
 
 # Verify that a passphrase was supplied to the script before setting variables
 if [ -z "$1" ]
@@ -48,7 +43,7 @@ openssl genrsa -aes256 -passout pass:"$PASSPHRASE" -out "$CA_KEY" 4096
 
 # Generate the CA
 openssl req -new -x509 -sha256 -days 365 \
-  -subj "/C=AU/ST=Victoria/L=Melbourne/O=Team Rad HQ/OU=The Mothership/CN=Team Rad/emailAddress=admin@gateway.local" \
+  -subj "/C=$CA_CONTRY/ST=$CA_STATE/L=$CA_LOCALITY/O=$CA_ORGANISATION/OU=$CA_UNIT/CN=$CA_NAME/emailAddress=$CA_EMAIL" \
   -key "$CA_KEY" \
   -passin pass:"$PASSPHRASE" \
   -out "$CA"

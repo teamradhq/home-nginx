@@ -8,22 +8,14 @@
 #   was created by the create-ca.sh script.                                   #
 #                                                                             #
 ###############################################################################
-
+source ./functions.sh
 source .env
+check-env
 
 USAGE="Usage: $0 <cert-name> <passphrase> [--ips=<ip1,ip2,...>] [--domains=<domain1,domain2,...>]"
 
-if [[ -z "$CA_PREFIX" ]]
-then
-  echo "No .env value set for CA_PREFIX"
-  exit 1
-fi
-
-CA="./CA/$CA_PREFIX.CA-certificate.pem"
-CA_KEY="./CA/$CA_PREFIX.CA-key.pem"
-
 # Ensure that the CA files exist
-FILES=("$CA" "$CA_KEY")
+FILES=("$CA_CERTIFICATE" "$CA_KEY")
 for file in "${FILES[@]}"; do
   if [[ ! -e "$file" ]]; then
     echo "The file $file does not exist."
@@ -78,6 +70,13 @@ done
 IFS=',' read -ra IP_ARRAY <<< "$IPS"
 IFS=',' read -ra DOMAIN_ARRAY <<< "$DOMAINS"
 
+if [[ -z "$IPS" || -z "$DOMAINS" ]]
+then
+  echo "Please provide at least one IP address or domain."
+  echo "$USAGE"
+  exit 6
+fi
+
 # Generate the subjectAltName string
 SAN="subjectAltName="
 for IP in "${IP_ARRAY[@]}"; do
@@ -112,12 +111,12 @@ echo "extendedKeyUsage=serverAuth" >> extfile.cnf
 echo "Creating Certificate: $CERTIFICATE"
 openssl x509 -req -sha256 -days 365  -CAcreateserial \
   -in "$CSR" \
-  -CA "$CA" \
+  -CA "$CA_CERTIFICATE" \
   -CAkey "$CA_KEY" \
   -out "$CERTIFICATE" \
   -extfile extfile.cnf \
   -passin pass:"$PASSPHRASE" \
-  || (echo fail && exit 6)
+  || (echo fail && exit 7)
 
 
 echo "Created Certificate:  $CERTIFICATE"
