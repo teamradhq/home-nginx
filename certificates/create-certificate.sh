@@ -17,13 +17,10 @@ USAGE="Usage: $0 <cert-name> <passphrase> [--ips=<ip1,ip2,...>] [--domains=<doma
 # Ensure that the CA files exist
 FILES=("$CA_CERTIFICATE" "$CA_KEY")
 for file in "${FILES[@]}"; do
-  if [[ ! -e "$file" ]]; then
-    echo "The file $file does not exist."
-    echo "A self signed certificate cannot be created without the Certificate Authority"
-    exit 2
-  fi
+  check-file-exists "$file" "A self signed certificate cannot be created without the Certificate Authority"
 done
 
+exit
 # Ensure all required arguments are supplied.
 if [[ -z "$1" ]]
 then

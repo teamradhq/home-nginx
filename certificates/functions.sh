@@ -28,3 +28,47 @@ check-env() {
   check-env-var "CA_CERTIFICATE" "$CA_CERTIFICATE"
   check-env-var "CA_KEY" "$CA_KEY"
 }
+
+# Echo non-empty message
+#
+# Usage:
+#    if-message {message}
+#    if-message
+#
+if-message() {
+  if [[ -n "$1" ]]; then
+    echo "$1"
+  fi
+}
+
+# Check a file exist, exiting with error message if not.
+#
+# Usage:
+#    check-file-exists {file}
+#    check-file-exists {file} {message}
+#
+check-file-exists() {
+  local file=$1
+
+  if [[ ! -e "$file" ]]; then
+    echo "The file $file does not exist."
+    if-message "$2"
+    exit 2
+  fi
+}
+
+# Check a file is writeable, exiting with error message if it's not.
+#
+# Usage:
+#    check-file-is-writeable {file}
+#    check-file-is-writeable {file} {message}
+#
+check-file-is-writeable() {
+  local file=$1
+
+  if [[ -e "$file" && ! -w "$file" ]]; then
+    echo "The file $file is read-only."
+    if-message "$2"
+    exit 3
+  fi
+}
